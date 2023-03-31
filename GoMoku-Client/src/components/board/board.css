@@ -1,0 +1,13 @@
+.board {
+  display: grid;
+  border-top: 1px solid #242424;
+  border-left: 1px solid #242424;
+  background-color: #242424;
+  width: min-content;
+  grid-template-columns: repeat(1fr, 10);
+  grid-template-rows: repeat(1fr, 10);
+}
+.stone {
+  border-right: 1px solid #242424;
+  border-bottom: 1px solid #242424;
+}
