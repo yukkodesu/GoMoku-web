@@ -20,8 +20,14 @@ function App() {
   const handleClick: MouseEventHandler = function (e) {
     if (e.target instanceof HTMLImageElement) {
       const indexStr = e.target.dataset.index;
-      if (!indexStr || !wsRef.current) return;
-      wsRef.current.send(indexStr);
+      if (!indexStr || !wsRef.current || !state) return;
+      wsRef.current.send(
+        JSON.stringify({
+          index: indexStr,
+          userid: state.userid,
+          signature: state.signature,
+        })
+      );
     }
   };
 
@@ -59,7 +65,11 @@ function App() {
         <h1>GoMoku</h1>
         <div>
           <div style={{ padding: "10px 0" }}>
-            <button style={{ padding: "5px" }} disabled={state && state?.type !== ""} onClick={startGame}>
+            <button
+              style={{ padding: "5px" }}
+              disabled={state && state?.type !== ""}
+              onClick={startGame}
+            >
               Play
             </button>
             <button

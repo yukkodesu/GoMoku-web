@@ -76,14 +76,24 @@ wss.on("connection", ws => {
             const user2 = userMap.get(user1);
             const state1 = stateMap.get(user1);
             const state2 = stateMap.get(user2);
-            const index = parseInt(data.toString());
+            const { index: indexStr, userid, signature } = JSON.parse(data);
+            // console.log(JSON.parse(data));
+            if (!indexStr || !userid || !signature) {
+                console.log("Request Parse Err");
+                return;
+            }
+            const index = parseInt(indexStr);
+            const hashDigest = sha256(userid);
+            const signatureCheck = Base64.stringify(hmacSHA512(hashDigest, privateKey));
+            if (signatureCheck !== signature) {
+                console.log("Check Sum Err")
+                return;
+            }
             if (state1.boardArr[index] !== 0 || state1.role !== state1.type) return;
             state1.boardArr[index] = state1.role === 'white' ? 1 : 2;
             state2.boardArr[index] = state1.boardArr[index];
             state1.type = prevState.type === "white" ? "black" : "white";
             state2.type = state1.type;
-
-            
             user1.send(JSON.stringify(state1));
             user2.send(JSON.stringify(state2));
             return;
