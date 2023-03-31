@@ -4,8 +4,8 @@
   border-left: 1px solid #242424;
   background-color: #242424;
   width: min-content;
-  grid-template-columns: repeat(1fr, 10);
-  grid-template-rows: repeat(1fr, 10);
+  grid-template-columns: repeat(10, 1fr);
+  grid-template-rows: repeat(10, 1fr);
 }
 .stone {
   border-right: 1px solid #242424;

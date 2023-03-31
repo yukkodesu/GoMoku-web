@@ -6,3 +6,10 @@
   align-content: center;
   justify-content: center;
 }
+
+.container {
+  display: flex;
+}
+.player-info {
+  flex: 1;
+}
