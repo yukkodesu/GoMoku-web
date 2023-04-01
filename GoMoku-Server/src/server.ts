@@ -1,6 +1,7 @@
 import express from "express";
 import { Server as SocketServer, WebSocket } from "ws";
 import { v4 as uuidv4 } from "uuid";
+import { RawData } from "ws";
 
 const app = express();
 const server = app.listen("5050");
@@ -20,8 +21,8 @@ interface State {
 }
 
 wss.on("connection", (ws) => {
-  ws.on("close", onUserConnect);
-  ws.on("message", onStateChange);
+  ws.on("close", () => onUserConnect(ws));
+  ws.on("message", (data) => onStateChange(ws, data));
 });
 
 const onUserConnect = (ws: WebSocket) => {
@@ -40,7 +41,7 @@ const onUserConnect = (ws: WebSocket) => {
   userMap.delete(ws);
 };
 
-const onStateChange = (ws: WebSocket, data: string) => {
+const onStateChange = (ws: WebSocket, data: RawData) => {
   const prevState = stateMap.get(ws);
 
   //init State
@@ -75,7 +76,7 @@ const onStateChange = (ws: WebSocket, data: string) => {
       return;
     }
     const { state1, state2 } = getState(user1, user2);
-    const { index: indexStr, userid } = JSON.parse(data);
+    const { index: indexStr, userid } = JSON.parse(data.toString());
 
     if (!indexStr || !userid) {
       console.error("Request Parse Err");
