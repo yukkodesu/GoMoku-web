@@ -9,7 +9,6 @@ interface State {
   role: string;
   boardArr: Array<number>;
   userid: string;
-  signature: string;
 }
 
 function App() {
@@ -25,7 +24,6 @@ function App() {
         JSON.stringify({
           index: indexStr,
           userid: state.userid,
-          signature: state.signature,
         })
       );
     }
