@@ -39,7 +39,7 @@ function App() {
   const startGame = function () {
     resetGame();
     const playerName = prompt("Enter Your Name");
-    const ws = new WebSocket("ws://192.168.1.215:5173/api");
+    const ws = new WebSocket("ws://localhost:5173/api");
     wsRef.current = ws;
     ws.onopen = () => {
       ws.send(playerName ?? "player_random");
