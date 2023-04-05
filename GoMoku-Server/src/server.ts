@@ -109,6 +109,13 @@ const switchType = function (
   if (state1.boardArr[move] !== 0 || state1.role !== state1.type) return;
   state1.boardArr[move] = state1.role === "white" ? 1 : 2;
   state2.boardArr[move] = state1.boardArr[move];
+  const isWinning = checkWinning(state1.boardArr);
+  if (isWinning) {
+    const winner = isWinning === 1 ? "white" : "black";
+    state1.type = winner === state1.role ? "winning" : "lost";
+    state2.type = winner === state2.role ? "winning" : "lost";
+    return;
+  }
   state1.type = prevState.type === "white" ? "black" : "white";
   state2.type = state1.type;
 };
@@ -119,20 +126,58 @@ const joinTwoPlayer = function () {
   userMap.set(user2, user1);
   const { state1, state2 } = getState(user1, user2);
   const rand = Math.random();
-
-  stateMap.set(user1, {
+  const newState1 = {
     ...state1,
     type: "black",
     role: rand < 0.5 ? "white" : "black",
     anotherPlayerName: state2.playerName,
-  });
-  stateMap.set(user2, {
+  };
+  const newState2 = {
     ...state2,
     type: "black",
     role: rand < 0.5 ? "black" : "white",
     anotherPlayerName: state1.playerName,
-  });
+  };
+  stateMap.set(user1, newState1);
+  stateMap.set(user2, newState2);
 
-  user1.send(JSON.stringify(state1));
-  user2.send(JSON.stringify(state2));
+  user1.send(JSON.stringify(newState1));
+  user2.send(JSON.stringify(newState2));
+};
+
+const checkWinning = function (board: Array<number>): number {
+  const vec = [
+    [1, 0],
+    [0, 1],
+    [1, 1],
+    [1, -1],
+  ];
+  for (let i = 0; i < 10; i++) {
+    for (let j = 0; j < 10; j++) {
+      const index = i * 10 + j;
+      if (board[index] === 0) continue;
+
+      for (let k = 0; k < vec.length; k++) {
+        let x = i,
+          y = j;
+        let cnt = 0;
+        while (x < 10 && y < 10 && x >= 0 && y >= 0) {
+          x += vec[k][0];
+          y += vec[k][1];
+          if (board[x * 10 + y] !== board[index]) break;
+          cnt++;
+        }
+        x = i;
+        y = j;
+        while (x < 10 && y < 10 && x >= 0 && y >= 0) {
+          x -= vec[k][0];
+          y -= vec[k][1];
+          if (board[x * 10 + y] !== board[index]) break;
+          cnt++;
+        }
+        if (cnt + 1 >= 5) return board[index];
+      }
+    }
+  }
+  return 0;
 };
