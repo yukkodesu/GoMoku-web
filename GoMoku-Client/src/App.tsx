@@ -1,6 +1,7 @@
 import { MouseEventHandler, useEffect, useRef, useState } from "react";
 import "./App.css";
 import Board from "./components/board/board";
+import createConfetti from "./utils/confetti";
 
 interface State {
   type: string;
@@ -14,7 +15,13 @@ interface State {
 function App() {
   const wsRef = useRef<WebSocket | undefined>(undefined);
   const [state, setState] = useState<State | undefined>(undefined);
-  console.log(state);
+  // console.log(state);
+
+  useEffect(() => {
+    if (state?.type === "winning") {
+      createConfetti();
+    }
+  }, [state]);
 
   const handleClick: MouseEventHandler = function (e) {
     if (e.target instanceof HTMLImageElement) {
@@ -40,6 +47,7 @@ function App() {
     ws.onmessage = (ev) => {
       const stateParsed = JSON.parse(ev.data);
       if (stateParsed) {
+        console.log(stateParsed);
         setState(stateParsed);
       }
     };
@@ -98,6 +106,13 @@ function App() {
               <h2>Your Turn</h2>
             ) : (
               <h2>Waiting Player2 Movement</h2>
+            )
+          ) : null}
+          {state?.type === "winning" || state?.type === "lost" ? (
+            state?.type === "winning" ? (
+              <h2>You Win!</h2>
+            ) : (
+              <h2>You Lost</h2>
             )
           ) : null}
         </div>
