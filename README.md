@@ -30,6 +30,7 @@ wsRef.current = ws;
 
 ```shell
 cd ./GoMoku-Client
+pnpm install
 pnpm run dev --host
 ```
 
@@ -37,6 +38,7 @@ pnpm run dev --host
 
 ```shell
 cd ./GoMoku-Server
+pnpm install
 pnpm run dev
 ```
 and open Browser at `http://<your-ip>:5173`
